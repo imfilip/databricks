@@ -52,6 +52,10 @@
 
 -- COMMAND ----------
 
+select * from events_raw;
+
+-- COMMAND ----------
+
 CREATE OR REPLACE TEMP VIEW events_strings AS 
 SELECT string(key), string(value) FROM events_raw;
 
@@ -63,6 +67,7 @@ SELECT * FROM events_strings
 -- MAGIC from pyspark.sql.functions import col
 -- MAGIC
 -- MAGIC events_stringsDF = (spark
+-- MAGIC     .read
 -- MAGIC     .table("events_raw")
 -- MAGIC     .select(col("key").cast("string"), 
 -- MAGIC             col("value").cast("string"))
@@ -103,6 +108,12 @@ SELECT * FROM events_strings WHERE value:event_name = "finalize" ORDER BY key LI
 
 -- COMMAND ----------
 
+-- MAGIC %python
+-- MAGIC from pyspark.sql import functions as F
+-- MAGIC events_stringsDF.where("value:event_name = 'finalize'").orderBy('key').limit(1).display()
+
+-- COMMAND ----------
+
 -- DBTITLE 0,--i18n-914b04cd-a1c1-4a91-aea3-ecd87714ea7d
 -- MAGIC %md
 -- MAGIC Let's use the JSON string example above to derive the schema, then parse the entire JSON column into struct types.
@@ -136,8 +147,8 @@ SELECT * FROM parsed_events
 -- MAGIC     .select(from_json("value", schema_of_json(json_string)).alias("json"))
 -- MAGIC     .select("json.*")
 -- MAGIC )
--- MAGIC
--- MAGIC display(parsed_eventsDF)
+-- MAGIC parsed_eventsDF.dtypes
+-- MAGIC # display(parsed_eventsDF)
 
 -- COMMAND ----------
 
@@ -162,12 +173,17 @@ SELECT * FROM exploded_events WHERE size(items) > 2
 -- COMMAND ----------
 
 -- MAGIC %python
+-- MAGIC parsed_eventsDF.filter(F.col('user_id') == 'UA000000107380131').display()
+
+-- COMMAND ----------
+
+-- MAGIC %python
 -- MAGIC from pyspark.sql.functions import explode, size
 -- MAGIC
 -- MAGIC exploded_eventsDF = (parsed_eventsDF
 -- MAGIC     .withColumn("item", explode("items"))
 -- MAGIC )
--- MAGIC
+-- MAGIC # exploded_eventsDF.dtypes
 -- MAGIC display(exploded_eventsDF.where(size("items") > 2))
 
 -- COMMAND ----------
@@ -296,6 +312,32 @@ PIVOT (
 -- MAGIC     .sum("item.quantity")
 -- MAGIC )
 -- MAGIC display(transactionsDF)
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC # My own experiments
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC from pyspark.sql import functions as F
+-- MAGIC columns = ["language","users_count"]
+-- MAGIC data = [("Java", [["20000"]]), ("Python", [["100000", "1"], ["100"]]), ("Scala", [["3000"]])]
+-- MAGIC
+-- MAGIC # spark = spark.builder.appName('SparkByExamples.com').getOrCreate()
+-- MAGIC df = spark.createDataFrame(data).toDF(*columns)
+-- MAGIC df.show()
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC df.select("*", F.explode(F.col("users_count")).alias("exploded"), F.size(F.col("users_count")), F.flatten(F.col("users_count"))).show()
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC spark
 
 -- COMMAND ----------
 

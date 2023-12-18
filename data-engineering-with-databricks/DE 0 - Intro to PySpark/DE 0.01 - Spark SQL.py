@@ -337,6 +337,10 @@ display(spark.sql("SELECT * FROM budget"))
 
 # COMMAND ----------
 
+spark.range(1,10).display()
+
+# COMMAND ----------
+
 DA.cleanup()
 
 # COMMAND ----------

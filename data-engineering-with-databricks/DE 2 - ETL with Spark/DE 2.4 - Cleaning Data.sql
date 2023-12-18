@@ -68,6 +68,11 @@ FROM users_dirty
 
 -- COMMAND ----------
 
+-- MAGIC %python
+-- MAGIC spark.table("users_dirty").show(10, truncate=False)
+
+-- COMMAND ----------
+
 -- DBTITLE 0,--i18n-c414c24e-3b72-474b-810d-c3df32032c26
 -- MAGIC %md
 -- MAGIC
@@ -87,7 +92,7 @@ FROM users_dirty
 
 -- COMMAND ----------
 
-SELECT count_if(email IS NULL) FROM users_dirty;
+-- SELECT count_if(email IS NULL) FROM users_dirty;
 SELECT count(*) FROM users_dirty WHERE email IS NULL;
 
 -- COMMAND ----------
@@ -98,6 +103,11 @@ SELECT count(*) FROM users_dirty WHERE email IS NULL;
 -- MAGIC
 -- MAGIC usersDF.selectExpr("count_if(email IS NULL)")
 -- MAGIC usersDF.where(col("email").isNull()).count()
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC usersDF.show(10, truncate=False)
 
 -- COMMAND ----------
 
@@ -259,6 +269,11 @@ FROM (
 -- COMMAND ----------
 
 -- MAGIC %python
+-- MAGIC dedupedDF.dtypes
+
+-- COMMAND ----------
+
+-- MAGIC %python
 -- MAGIC from pyspark.sql.functions import date_format, regexp_extract
 -- MAGIC
 -- MAGIC display(dedupedDF
@@ -267,6 +282,20 @@ FROM (
 -- MAGIC     .withColumn("first_touch_time", date_format("first_touch", "HH:mm:ss"))
 -- MAGIC     .withColumn("email_domain", regexp_extract("email", "(?<=@).+", 0))
 -- MAGIC )
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC dedupedDF\
+-- MAGIC   .select("*",\
+-- MAGIC     (col("user_first_touch_timestamp") / 1e6).cast("timestamp").alias("first_touch")\
+-- MAGIC     )\
+-- MAGIC   .select("*",\
+-- MAGIC     (date_format("first_touch", "MMM d, yyyy").alias("first_touch_date")),\
+-- MAGIC     (date_format("first_touch", "HH:mm:ss")).alias("first_touch_time"),\
+-- MAGIC     (regexp_extract("email", "(?<=@).+", 0)).alias("domain")
+-- MAGIC     )\
+-- MAGIC   .display()
 
 -- COMMAND ----------
 

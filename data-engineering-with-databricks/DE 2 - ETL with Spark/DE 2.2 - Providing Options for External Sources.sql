@@ -111,6 +111,10 @@ LOCATION "${DA.paths.sales_csv}"
 
 -- COMMAND ----------
 
+select * from marcin_filip_y5en_da_delp.sales_csv
+
+-- COMMAND ----------
+
 -- DBTITLE 0,--i18n-4631ecfc-06b5-494a-904f-8577e345c98d
 -- MAGIC %md
 -- MAGIC
@@ -286,6 +290,17 @@ SELECT * FROM users_jdbc
 
 -- COMMAND ----------
 
+-- MAGIC %python
+-- MAGIC x = spark.sql("""select * from users_jdbc""")
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC from pyspark.sql import functions as F
+-- MAGIC x.filter(F.col('email').contains('gmail')).show(10, truncate=False)
+
+-- COMMAND ----------
+
 -- DBTITLE 0,--i18n-3576239e-8f73-4ef9-982e-e42542d4fc70
 -- MAGIC %md
 -- MAGIC
@@ -297,6 +312,11 @@ SELECT * FROM users_jdbc
 -- COMMAND ----------
 
 DESCRIBE EXTENDED users_jdbc
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC spark.sql("DESCRIBE EXTENDED users_jdbc").filter(F.col("col_name") == "Location").first()['data_type']
 
 -- COMMAND ----------
 

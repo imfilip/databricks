@@ -73,8 +73,29 @@
 
 -- COMMAND ----------
 
+-- MAGIC %python
+-- MAGIC print(DA.paths.kafka_events)
+-- MAGIC dbutils.fs.ls(DA.paths.kafka_events)
+
+-- COMMAND ----------
+
 -- TODO
-<FILL_IN> "${DA.paths.kafka_events}" 
+-- DROP TABLE events_json;
+CREATE TABLE IF NOT EXISTS events_json
+(key BINARY, offset BIGINT, partition INT, timestamp BIGINT, topic STRING, value BINARY)
+USING JSON
+LOCATION "${DA.paths.kafka_events}"
+
+-- COMMAND ----------
+
+REFRESH TABLE events_json;
+DESCRIBE EXTENDED events_json;
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC df = spark.table("events_json")
+-- MAGIC df.dtypes
 
 -- COMMAND ----------
 

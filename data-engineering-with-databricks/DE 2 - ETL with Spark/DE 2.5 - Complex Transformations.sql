@@ -216,7 +216,8 @@ GROUP BY user_id
 -- MAGIC display(exploded_eventsDF
 -- MAGIC     .groupby("user_id")
 -- MAGIC     .agg(collect_set("event_name").alias("event_history"),
--- MAGIC             array_distinct(flatten(collect_set("items.item_id"))).alias("cart_history"))
+-- MAGIC          array_distinct(flatten(collect_set("items.item_id"))).alias("cart_history"),
+-- MAGIC          flatten(collect_set("items.item_id")).alias("cart_history2"))
 -- MAGIC )
 
 -- COMMAND ----------
@@ -322,8 +323,8 @@ PIVOT (
 
 -- MAGIC %python
 -- MAGIC from pyspark.sql import functions as F
--- MAGIC columns = ["language","users_count"]
--- MAGIC data = [("Java", [["20000"]]), ("Python", [["100000", "1"], ["100"]]), ("Scala", [["3000"]])]
+-- MAGIC columns = ["language","users_count","new_col"]
+-- MAGIC data = [("Java", [["20000"]], 1), ("Python", [["100000", "1", "abc"], ["100"]], 2), ("Scala", [["3000"]], 3), ('Python', [["abc", "def"]], 4)]
 -- MAGIC
 -- MAGIC # spark = spark.builder.appName('SparkByExamples.com').getOrCreate()
 -- MAGIC df = spark.createDataFrame(data).toDF(*columns)
@@ -333,6 +334,18 @@ PIVOT (
 
 -- MAGIC %python
 -- MAGIC df.select("*", F.explode(F.col("users_count")).alias("exploded"), F.size(F.col("users_count")), F.flatten(F.col("users_count"))).show()
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC df.groupBy('language').agg(F.array_distinct(F.flatten(F.flatten(F.collect_set('users_count')))),
+-- MAGIC                            F.flatten(F.flatten(F.collect_set('users_count')))).display()
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC from pyspark.sql import functions as F
+-- MAGIC df.groupBy('language').agg(F.collect_set('new_col')).display()
 
 -- COMMAND ----------
 

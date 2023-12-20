@@ -163,7 +163,13 @@ def vectorized_udf(email: pd.Series) -> pd.Series:
 
 # COMMAND ----------
 
-display(sales_df.select(vectorized_udf(col("email"))))
+@pandas_udf("string")
+def vectorized_udf_2(email):
+  return email.str[0]
+
+# COMMAND ----------
+
+display(sales_df.select(vectorized_udf(col("email")), vectorized_udf_2(col("email"))))
 
 # COMMAND ----------
 
@@ -175,12 +181,13 @@ display(sales_df.select(vectorized_udf(col("email"))))
 # COMMAND ----------
 
 spark.udf.register("sql_vectorized_udf", vectorized_udf)
+spark.udf.register("sql_vectorized_udf_2", vectorized_udf_2)
 
 # COMMAND ----------
 
 # MAGIC %sql
 # MAGIC -- Use the Pandas UDF from SQL
-# MAGIC SELECT sql_vectorized_udf(email) AS firstLetter FROM sales
+# MAGIC SELECT sql_vectorized_udf(email) AS firstLetter, sql_vectorized_udf_2(email) AS firstLetter  FROM sales
 
 # COMMAND ----------
 

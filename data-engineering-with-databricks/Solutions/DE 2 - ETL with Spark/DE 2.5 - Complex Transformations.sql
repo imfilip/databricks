@@ -59,6 +59,11 @@ SELECT * FROM events_strings
 
 -- COMMAND ----------
 
+-- CREATE TABLE IF NOT EXISTS events_strings_table as
+-- SELECT string(key), string(value) FROM hive_metastore.marcin_filip_y5en_da_delp.events_raw;
+
+-- COMMAND ----------
+
 -- MAGIC %python
 -- MAGIC from pyspark.sql.functions import col
 -- MAGIC
@@ -90,6 +95,10 @@ SELECT * FROM events_strings
 
 -- COMMAND ----------
 
+select * from events_strings;
+
+-- COMMAND ----------
+
 SELECT * FROM events_strings WHERE value:event_name = "finalize" ORDER BY key LIMIT 1
 
 -- COMMAND ----------
@@ -100,6 +109,12 @@ SELECT * FROM events_strings WHERE value:event_name = "finalize" ORDER BY key LI
 -- MAGIC     .orderBy("key")
 -- MAGIC     .limit(1)
 -- MAGIC )
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC from pyspark.sql import functions as F
+-- MAGIC # events_stringsDF.where(F.col('value.event_name') == 'finalize').sort('key').limit(1).display()
 
 -- COMMAND ----------
 

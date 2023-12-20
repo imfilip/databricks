@@ -77,6 +77,15 @@ DESCRIBE HISTORY events
 
 -- COMMAND ----------
 
+INSERT OVERWRITE events
+SELECT * FROM parquet.`${da.paths.datasets}/ecommerce/raw/events-historical`
+
+-- COMMAND ----------
+
+DESCRIBE HISTORY events;
+
+-- COMMAND ----------
+
 -- DBTITLE 0,--i18n-bb68d513-240c-41e1-902c-3c3add9c0a75
 -- MAGIC %md
 -- MAGIC
@@ -120,8 +129,8 @@ DESCRIBE HISTORY sales
 
 -- COMMAND ----------
 
--- INSERT OVERWRITE sales
--- SELECT *, current_timestamp() FROM parquet.`${da.paths.datasets}/ecommerce/raw/sales-historical`
+INSERT OVERWRITE sales
+SELECT *, current_timestamp() FROM parquet.`${da.paths.datasets}/ecommerce/raw/sales-historical`
 
 -- COMMAND ----------
 
@@ -149,6 +158,10 @@ SELECT * FROM parquet.`${da.paths.datasets}/ecommerce/raw/sales-30m`
 -- MAGIC
 -- MAGIC
 -- MAGIC Note that **`INSERT INTO`** does not have any built-in guarantees to prevent inserting the same records multiple times. Re-executing the above cell would write the same records to the target table, resulting in duplicate records.
+
+-- COMMAND ----------
+
+DESCRIBE HISTORY sales
 
 -- COMMAND ----------
 
@@ -194,12 +207,24 @@ FROM parquet.`${da.paths.datasets}/ecommerce/raw/users-30m`
 
 -- COMMAND ----------
 
+SELECT * FROM users;
+
+-- COMMAND ----------
+
 MERGE INTO users a
 USING users_update b
 ON a.user_id = b.user_id
 WHEN MATCHED AND a.email IS NULL AND b.email IS NOT NULL THEN
   UPDATE SET email = b.email, updated = b.updated
 WHEN NOT MATCHED THEN INSERT *
+
+-- COMMAND ----------
+
+SELECT * FROM users;
+
+-- COMMAND ----------
+
+describe history users;
 
 -- COMMAND ----------
 
@@ -277,3 +302,7 @@ FILEFORMAT = PARQUET
 -- MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="https://www.apache.org/">Apache Software Foundation</a>.<br/>
 -- MAGIC <br/>
 -- MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="https://help.databricks.com/">Support</a>
+
+-- COMMAND ----------
+
+

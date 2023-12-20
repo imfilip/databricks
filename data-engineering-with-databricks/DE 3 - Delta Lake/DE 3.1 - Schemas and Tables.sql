@@ -172,6 +172,29 @@ SELECT * FROM external_table;
 
 -- COMMAND ----------
 
+-- MAGIC %python
+-- MAGIC dbutils.fs.help()
+
+-- COMMAND ----------
+
+-- MAGIC %fs mounts
+
+-- COMMAND ----------
+
+-- MAGIC %fs mkdirs dbfs:/mnt/dbacademy-users/marcin.filip@bluesoft.com/data-engineer-learning-path/external_table/new_dir/
+
+-- COMMAND ----------
+
+-- MAGIC %sh python -m this
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC print(f"{DA.paths.datasets}/flights/departuredelays.csv")
+-- MAGIC print(dbutils.fs.ls("dbfs:/mnt/dbacademy-users/marcin.filip@bluesoft.com/data-engineer-learning-path/external_table"))
+
+-- COMMAND ----------
+
 -- DBTITLE 0,--i18n-6b5d7597-1fc1-4747-b5bb-07f67d806c2b
 -- MAGIC %md
 -- MAGIC

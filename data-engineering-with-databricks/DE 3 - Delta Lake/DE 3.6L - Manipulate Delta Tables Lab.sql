@@ -54,7 +54,7 @@
 
 -- COMMAND ----------
 
-CREATE TABLE beans 
+CREATE OR REPLACE TABLE beans 
 (name STRING, color STRING, grams FLOAT, delicious BOOLEAN);
 
 INSERT INTO beans VALUES
@@ -94,6 +94,16 @@ WHEN NOT MATCHED AND b.delicious = true THEN
 
 -- COMMAND ----------
 
+-- MAGIC %python
+-- MAGIC spark.sql("select * from beans version as of 5").display()
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC spark.sql("select * from beans").display()
+
+-- COMMAND ----------
+
 -- DBTITLE 0,--i18n-bf6ff074-4166-4d51-92e5-67e7f2084c9b
 -- MAGIC %md
 -- MAGIC
@@ -108,7 +118,7 @@ WHEN NOT MATCHED AND b.delicious = true THEN
 -- COMMAND ----------
 
 -- TODO
-<FILL-IN>
+DESCRIBE HISTORY beans;
 
 -- COMMAND ----------
 
@@ -178,7 +188,7 @@ SELECT * FROM beans
 
 -- TODO
 CREATE OR REPLACE TEMP VIEW pre_delete_vw AS
-<FILL-IN>
+SELECT * FROM beans VERSION AS OF 4;
 
 -- COMMAND ----------
 
@@ -214,7 +224,8 @@ SELECT * FROM pre_delete_vw
 -- COMMAND ----------
 
 -- TODO
-<FILL-IN>
+RESTORE TABLE beans TO VERSION AS OF 5; 
+-- DESCRIBE HISTORY beans
 
 -- COMMAND ----------
 
@@ -250,8 +261,17 @@ DESCRIBE HISTORY beans
 
 -- COMMAND ----------
 
+RESTORE TABLE beans TO VERSION AS OF 5;
+
+-- COMMAND ----------
+
+DESCRIBE DETAIL beans;
+
+-- COMMAND ----------
+
 -- TODO
-<FILL-IN>
+OPTIMIZE beans
+ZORDER BY name
 
 -- COMMAND ----------
 
@@ -279,6 +299,11 @@ DESCRIBE DETAIL beans
 -- MAGIC last_tx = spark.sql("DESCRIBE HISTORY beans").first()
 -- MAGIC assert last_tx["operation"] == "OPTIMIZE", "Make sure you used the `OPTIMIZE` command to perform file compaction"
 -- MAGIC assert last_tx["operationParameters"]["zOrderBy"] == '["name"]', "Use `ZORDER BY name` with your optimize command to index your table"
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC type(spark.sql("DESCRIBE HISTORY beans").first())
 
 -- COMMAND ----------
 
@@ -384,7 +409,7 @@ SELECT * FROM beans
 
 -- COMMAND ----------
 
--- SELECT * FROM beans@v1
+SELECT * FROM beans@v1
 
 -- COMMAND ----------
 

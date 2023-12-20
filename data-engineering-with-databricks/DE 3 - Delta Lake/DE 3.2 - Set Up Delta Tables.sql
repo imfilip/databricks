@@ -220,8 +220,26 @@ SELECT * FROM purchase_dates
 
 -- COMMAND ----------
 
--- INSERT INTO purchase_dates VALUES
--- (1, 600000000, 42.0, "2020-06-18")
+INSERT INTO purchase_dates VALUES
+(1, 600000000, 42.0, "2020-06-18")
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC My experiments
+
+-- COMMAND ----------
+
+ALTER TABLE purchase_dates DROP CONSTRAINT valid_date;
+
+-- COMMAND ----------
+
+INSERT INTO purchase_dates VALUES
+(123, 1592252519914501, 100, "2020-06-15")
+
+-- COMMAND ----------
+
+select * from purchase_dates where id = 123
 
 -- COMMAND ----------
 

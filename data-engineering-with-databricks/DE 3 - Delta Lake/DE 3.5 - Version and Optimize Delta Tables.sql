@@ -261,6 +261,15 @@ DESCRIBE HISTORY students
 
 -- COMMAND ----------
 
+-- MAGIC %python
+-- MAGIC display(dbutils.fs.ls(f"{DA.paths.user_db}/students/_delta_log"))
+
+-- COMMAND ----------
+
+select * from json.`dbfs:/mnt/dbacademy-users/marcin.filip@bluesoft.com/data-engineer-learning-path/database.db/students/_delta_log/00000000000000000008.json`
+
+-- COMMAND ----------
+
 -- DBTITLE 0,--i18n-ed297545-7997-4e75-8bf6-0c204a707956
 -- MAGIC %md
 -- MAGIC
@@ -336,6 +345,10 @@ RESTORE TABLE students TO VERSION AS OF 8
 
 -- COMMAND ----------
 
+describe history students
+
+-- COMMAND ----------
+
 -- DBTITLE 0,--i18n-847452e6-2668-463b-afdf-52c1f512b8d3
 -- MAGIC %md
 -- MAGIC
@@ -353,7 +366,7 @@ RESTORE TABLE students TO VERSION AS OF 8
 
 -- COMMAND ----------
 
--- VACUUM students RETAIN 0 HOURS
+VACUUM students RETAIN 0 HOURS
 
 -- COMMAND ----------
 

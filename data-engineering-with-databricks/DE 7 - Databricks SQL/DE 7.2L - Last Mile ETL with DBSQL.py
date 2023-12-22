@@ -75,6 +75,41 @@ DA.generate_config()
 
 # COMMAND ----------
 
+# MAGIC %sql
+# MAGIC CREATE DATABASE IF NOT EXISTS marcin_filip_sopy_da_delp
+# MAGIC LOCATION 'dbfs:/mnt/dbacademy-users/marcin.filip@bluesoft.com/data-engineer-learning-path';
+# MAGIC
+# MAGIC USE marcin_filip_sopy_da_delp;
+# MAGIC
+# MAGIC CREATE TABLE user_ping 
+# MAGIC (user_id STRING, ping INTEGER, time TIMESTAMP); 
+# MAGIC
+# MAGIC CREATE TABLE user_ids (user_id STRING);
+# MAGIC
+# MAGIC INSERT INTO user_ids VALUES
+# MAGIC ("potato_luver"),
+# MAGIC ("beanbag_lyfe"),
+# MAGIC ("default_username"),
+# MAGIC ("the_king"),
+# MAGIC ("n00b"),
+# MAGIC ("frodo"),
+# MAGIC ("data_the_kid"),
+# MAGIC ("el_matador"),
+# MAGIC ("the_wiz");
+# MAGIC
+# MAGIC CREATE FUNCTION get_ping()
+# MAGIC     RETURNS INT
+# MAGIC     RETURN int(rand() * 250);
+# MAGIC     
+# MAGIC CREATE FUNCTION is_active()
+# MAGIC     RETURNS BOOLEAN
+# MAGIC     RETURN CASE 
+# MAGIC         WHEN rand() > .25 THEN true
+# MAGIC         ELSE false
+# MAGIC         END;
+
+# COMMAND ----------
+
 # DBTITLE 0,--i18n-9cd7f410-eead-4759-bd99-83eafb03d0df
 # MAGIC %md
 # MAGIC
@@ -113,6 +148,25 @@ DA.generate_load()
 
 # COMMAND ----------
 
+# MAGIC %sql
+# MAGIC USE marcin_filip_sopy_da_delp;
+# MAGIC INSERT INTO
+# MAGIC   user_ping
+# MAGIC SELECT
+# MAGIC   *,
+# MAGIC   get_ping() ping,
+# MAGIC   current_timestamp() time
+# MAGIC FROM
+# MAGIC   user_ids
+# MAGIC WHERE
+# MAGIC   is_active() = true;
+# MAGIC SELECT
+# MAGIC   *
+# MAGIC FROM
+# MAGIC   user_ping;
+
+# COMMAND ----------
+
 # DBTITLE 0,--i18n-48fc3085-b405-450f-9463-ee1501cd56aa
 # MAGIC %md
 # MAGIC
@@ -139,6 +193,12 @@ DA.generate_load()
 # MAGIC 1. Click **OK**
 # MAGIC
 # MAGIC **NOTE:** Although we are using a refresh schedule of 1 week for classroom purposes, you'll likely see shorter trigger intervals in production, such as schedules to refresh every 1 minute.
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC USE marcin_filip_sopy_da_delp;
+# MAGIC SELECT * FROM user_ping;
 
 # COMMAND ----------
 

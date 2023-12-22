@@ -58,6 +58,16 @@ DA.print_pipeline_config(pipeline_language)
 
 # COMMAND ----------
 
+# MAGIC %python
+# MAGIC dbutils.fs.ls("dbfs:/mnt/dbacademy-users/marcin.filip@bluesoft.com/data-engineer-learning-path/pipeline_demo/stream-source/orders")
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC SELECT * FROM json.`dbfs:/mnt/dbacademy-users/marcin.filip@bluesoft.com/data-engineer-learning-path/pipeline_demo/stream-source/customers/00.json`
+
+# COMMAND ----------
+
 # DBTITLE 0,--i18n-9b609cc5-91c8-4213-b6f7-1c737a6e44a3
 # MAGIC %md
 # MAGIC ## Create and Configure a Pipeline

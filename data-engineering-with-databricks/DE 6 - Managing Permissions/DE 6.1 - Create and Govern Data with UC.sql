@@ -42,6 +42,10 @@
 
 -- COMMAND ----------
 
+SHOW CATALOGS
+
+-- COMMAND ----------
+
 -- DBTITLE 0,--i18n-a0720484-97de-4742-9c38-6c5bd312f3d7
 -- MAGIC %md
 -- MAGIC ## Unity Catalog's three-level namespace

@@ -33,6 +33,10 @@
 
 # COMMAND ----------
 
+# MAGIC %fs ls dbfs:/mnt/dbacademy-users/marcin.filip@bluesoft.com/data-engineer-learning-path/pipeline_demo/storage_location/tables/
+
+# COMMAND ----------
+
 # MAGIC %sql
 # MAGIC USE ${DA.schema_name};
 # MAGIC

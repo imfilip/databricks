@@ -207,6 +207,10 @@ DESCRIBE TABLE EXTENDED external_table;
 
 -- COMMAND ----------
 
+-- MAGIC %fs ls dbfs:/mnt/dbacademy-users/marcin.filip@bluesoft.com/data-engineer-learning-path/external_table
+
+-- COMMAND ----------
+
 -- DBTITLE 0,--i18n-72f7bef4-570b-4c20-9261-b763b66b6942
 -- MAGIC %md
 -- MAGIC

@@ -252,6 +252,45 @@ SELECT * FROM binaryFile.`${DA.paths.kafka_events}`
 
 -- COMMAND ----------
 
+-- MAGIC %md
+-- MAGIC My experiments
+
+-- COMMAND ----------
+
+SELECT * FROM event_view;
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC
+-- MAGIC def delta_check(TableName: str) -> bool:
+-- MAGIC   desc_table = spark.sql(f"describe formatted {TableName}").collect()
+-- MAGIC   location = [i[1] for i in desc_table if i[0] == 'Location'][0]
+-- MAGIC   try:
+-- MAGIC     dir_check = dbutils.fs.ls(f"{location}/_delta_log")
+-- MAGIC     is_delta = True
+-- MAGIC   except Exception as e:
+-- MAGIC     is_delta = False
+-- MAGIC   return is_delta
+-- MAGIC
+-- MAGIC # res = delta_check("<table-name-to-check>")
+-- MAGIC
+-- MAGIC # if (res="True")
+-- MAGIC #  print("Yes, it is a Delta table.")
+-- MAGIC # else
+-- MAGIC #  print("No, it is not a Delta table.")
+
+-- COMMAND ----------
+
+DESCRIBE EXTENDED event_view
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC delta_check('event_view')
+
+-- COMMAND ----------
+
 -- MAGIC %python 
 -- MAGIC DA.cleanup()
 

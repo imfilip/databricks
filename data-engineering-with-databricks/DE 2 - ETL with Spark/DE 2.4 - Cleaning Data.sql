@@ -73,6 +73,14 @@ FROM users_dirty
 
 -- COMMAND ----------
 
+DESCRIBE EXTENDED users_dirty
+
+-- COMMAND ----------
+
+-- MAGIC %fs ls dbfs:/mnt/dbacademy-users/marcin.filip@bluesoft.com/data-engineer-learning-path/database.db/users_dirty
+
+-- COMMAND ----------
+
 -- DBTITLE 0,--i18n-c414c24e-3b72-474b-810d-c3df32032c26
 -- MAGIC %md
 -- MAGIC

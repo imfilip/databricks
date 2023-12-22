@@ -111,7 +111,101 @@ LOCATION "${DA.paths.sales_csv}"
 
 -- COMMAND ----------
 
-select * from marcin_filip_y5en_da_delp.sales_csv
+DESCRIBE EXTENDED sales_csv
+
+-- COMMAND ----------
+
+CREATE OR REPLACE TABLE sales_csv2 AS
+SELECT * FROM csv.`${DA.paths.sales_csv}`;
+
+-- COMMAND ----------
+
+DESCRIBE EXTENDED spark_catalog.marcin_filip_sopy_da_delp.sales_csv2;
+
+-- COMMAND ----------
+
+SELECT * FROM spark_catalog.marcin_filip_sopy_da_delp.sales_csv2;
+
+-- COMMAND ----------
+
+CREATE OR REPLACE TEMP VIEW sales_tmp_vw
+  (order_id LONG, email STRING, transactions_timestamp LONG, total_item_quantity INTEGER, purchase_revenue_in_usd DOUBLE, unique_items INTEGER, items STRING)
+USING CSV
+OPTIONS (
+  path = "${da.paths.sales_csv}",
+  header = "true",
+  delimiter = "|"
+);
+
+CREATE TABLE sales_csv_delta AS
+  SELECT * FROM sales_tmp_vw;
+
+-- COMMAND ----------
+
+DESCRIBE EXTENDED sales_csv_delta;
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC
+-- MAGIC sales = (spark.read
+-- MAGIC   .format("csv")
+-- MAGIC   .option("header", "true")
+-- MAGIC   .option("sep", "|")
+-- MAGIC   .option("inferSchema", "true")
+-- MAGIC   .load(f"{DA.paths.sales_csv}")
+-- MAGIC )
+-- MAGIC sales.display()
+-- MAGIC sales.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("/mnt/delta/sales")
+
+-- COMMAND ----------
+
+DROP TABLE IF EXISTS sales;
+
+CREATE TABLE sales USING DELTA LOCATION '/mnt/delta/sales/'
+
+-- COMMAND ----------
+
+DESCRIBE EXTENDED sales
+
+-- COMMAND ----------
+
+CREATE OR REPLACE TABLE sales_new AS
+SELECT * FROM delta.`dbfs:/mnt/delta/sales`;
+
+-- COMMAND ----------
+
+DESCRIBE EXTENDED sales_new
+
+-- COMMAND ----------
+
+SHOW CATALOGS
+
+-- COMMAND ----------
+
+select * from marcin_filip_sopy_da_delp.sales_csv
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC
+-- MAGIC def delta_check(TableName: str) -> bool:
+-- MAGIC   desc_table = spark.sql(f"describe formatted {TableName}").collect()
+-- MAGIC   location = [i[1] for i in desc_table if i[0] == 'Location'][0]
+-- MAGIC   try:
+-- MAGIC     dir_check = dbutils.fs.ls(f"{location}/_delta_log")
+-- MAGIC     is_delta = True
+-- MAGIC   except Exception as e:
+-- MAGIC     is_delta = False
+-- MAGIC   return is_delta
+
+-- COMMAND ----------
+
+-- MAGIC %python delta_check('sales_csv')
+
+-- COMMAND ----------
+
+DESCRIBE FORMATTED sales_csv;
 
 -- COMMAND ----------
 
